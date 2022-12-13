@@ -188,6 +188,24 @@
         <div class="col-12 grid-margin">
           <div class="card">
             <div class="card-body">
+              <h4 class="card-title">Достижения <b>(2 / 16)</b></h4>
+              <div class="achivement-list">
+                <div v-for="achivement in achivements" :key="achivement.id" class="achivement">
+                  <img :src="achivement.image">
+                  <div>
+                    <b>{{ achivement.title }}</b>
+                    <p>{{ achivement.description }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 grid-margin">
+          <div class="card">
+            <div class="card-body">
               <h4 class="card-title">Список постов</h4>
               <b-table striped hover responsive :items="posts" :fields="fields">
                 <template #cell(title)="data">
@@ -263,7 +281,7 @@ export default {
         },
         {
           key: 'likes',
-          label: 'Лайков',
+          label: 'Оценок',
           sortable: true
         }
       ],
@@ -281,7 +299,135 @@ export default {
       loaded: false,
       time1: null,
       stopComments: false,
-      stopPosts: false
+      stopPosts: false,
+      achivements: [
+        {
+          id: 0,
+          image: 'https://kladraz.ru/upload/blogs2/2020/6/16515_4e59ee879c53e1baaeb2243d4e51192e.jpg',
+          title: 'Начинающий щитпостер',
+          description: 'Опубликуйте 150 постов',
+          active: false
+        },
+        {
+          id: 1,
+          image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAX8rnxH67o8s5_lPynGa0VY6eenLjXsdXYQ4BPkcPahlorgyb6jLyn9rKZpDyyN7UPOA&usqp=CAU',
+          title: 'Продвинутый щитпостер',
+          description: 'Опубликуйте 300 постов',
+          active: false
+        },
+        {
+          id: 2,
+          image: 'https://u.foxford.ngcdn.ru/uploads/tinymce_file/file/68725/2bfbebb6df74ddb6.png',
+          title: 'Мега щитпостер',
+          description: 'Опубликуйте 500 постов',
+          active: false
+        },
+        {
+          id: 3,
+          image: 'https://thumbs.dreamstime.com/b/print-148080743.jpg',
+          title: 'Бла',
+          description: 'Напишете 500 комментариев',
+          active: false
+        },
+        {
+          id: 4,
+          image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple122/v4/ca/3c/ba/ca3cba78-2fa4-0eba-d07b-7f27193cbc69/source/256x256bb.jpg',
+          title: 'Бла-бла',
+          description: 'Напишете 1000 комментариев',
+          active: false
+        },
+        {
+          id: 5,
+          image: 'https://vk.com/sticker/1-9592-256b',
+          title: 'Бла-бла-бла',
+          description: 'Напишете 2000 комментариев',
+          active: false
+        },
+        {
+          id: 6,
+          image: 'https://rf4game.ru/wp-content/uploads/avatar/256/0132/132694.jpg',
+          title: 'Балабол',
+          description: 'Напишете 4000 комментариев',
+          active: false
+        },
+        {
+          id: 7,
+          image: 'https://pbs.twimg.com/profile_images/586951572841631744/LhlbcfTd_400x400.jpg',
+          title: 'Давай поговорим',
+          description: 'Ответьте на 500 комментариев',
+          active: false
+        },
+        {
+          id: 8,
+          image: 'https://img.wattpad.com/10810468f021ffefc1dc86857e5228edefdb4257/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f776174747061642d6d656469612d736572766963652f53746f7279496d6167652f48386161585159586f63454a61413d3d2d313233313539323636342e31366639653534646438323263393030393531303230353734302e6a7067?s=fit&w=720&h=720',
+          title: 'Слушай меня',
+          description: 'Ответьте на 1000 комментариев',
+          active: false
+        },
+        {
+          id: 9,
+          image: 'https://i.pinimg.com/280x280_RS/bc/82/f8/bc82f84811c46ab071ade3d78b1c9456.jpg',
+          title: 'Мне важно твоё мнение, но',
+          description: 'Ответьте на 2000 комментариев',
+          active: false
+        },
+        {
+          id: 10,
+          image: 'https://rf4game.ru/wp-content/uploads/avatar/256/1470/1470447.jpg',
+          title: 'Популярность, это я',
+          description: '1000 оценок на вашем посте',
+          active: false
+        },
+        {
+          id: 11,
+          image: 'https://st.depositphotos.com/1654249/1263/i/950/depositphotos_12630386-stock-photo-3d-man-showing-thumb-up.jpg',
+          title: 'Это уже топ?',
+          description: '1000 оценок на вашем комментарии',
+          active: false
+        },
+        {
+          id: 12,
+          image: 'https://pm1.narvii.com/6928/5a1528b97adaff14f2884b34e3701d0f6935a972r1-1080-1920v2_128.jpg',
+          title: 'АХАХАХ МЕМАСИКИ',
+          description: 'Прикрепите изображение к вашему комментарию, 500 раз',
+          active: false
+        },
+        {
+          id: 13,
+          image: 'https://static-s.aa-cdn.net/img/gp/20600015158347/o0nsNsbkGPgidZvdWHtWTe_5_a4Hc5IysaZtpm0XauLxVlXmGwvTKkGBf4V_ZUCFA6-1?v=1',
+          title: 'Разносторонняя личность',
+          description: 'Создайте посты в 10 разных подсайтах',
+          active: false
+        },
+        {
+          id: 14,
+          image: 'https://ru-static.z-dn.net/files/d48/17149596928e8814713eecda44c26c46.png',
+          title: 'Я полезный',
+          description: 'Ваши посты добавили в закладки 1000 раз',
+          active: false
+        },
+        {
+          id: 15,
+          image: 'https://cdn-icons-png.flaticon.com/128/2314/2314539.png',
+          title: 'Что, какой лонг?',
+          description: 'В этом году вы возможно написали лонг. (Больше 15 блоков в посте)',
+          active: false
+        },
+        {
+          id: 16,
+          image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOrj4H1znZkgWoPmejCa9cCgRpCj-8mpgIPQ&usqp=CAU',
+          title: 'Хороший мальчик',
+          description: 'Написать 5 лонгов (Больше 15 блоков в посте)',
+          active: false
+        },
+        {
+          id: 17,
+          image: 'https://vk.com/sticker/1-57373-256',
+          title: 'Посмотрите на меня',
+          description: '100 000 просмотров ваших постов',
+          active: false
+        },
+      ],
     };
   },
   async created() {
@@ -425,6 +571,41 @@ export default {
 }
 </script>
 
+//https://dtf.ru/u/23790-jfyx-melograno
+//Проверить
+
 <style scoped>
+.achivement-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.achivement {
+  background: #000000;
+  border-radius: 10px;
+  width: 450px;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin: 10px;
+  -webkit-filter: opacity(0.5); /* Safari 6.0 - 9.0 */
+  filter: opacity(0.5);
+}
+
+.achivement.active{
+  background: #000000;
+  -webkit-filter: none; /* Safari 6.0 - 9.0 */
+  filter: none;
+}
+
+.achivement img {
+  width: 70px;
+  height: 70px;
+  margin-right: 11px;
+}
+
+.achivement div {
+  padding-top: 14px;
+}
 
 </style>
