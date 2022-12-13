@@ -12,6 +12,8 @@
                   </div>
                   <h4>Пожалуйста подождите, мы получаем статистику по вашему профилю...</h4>
                   <center><img src="@/assets/loader.gif" style="width: 50px;"></center>
+                  <hr>
+                  <center><h3>{{ totalRequests }}</h3><br><small>Если эта цифра не увеличивается и застряла на месте, <a href="https://dtf.ru/u/52199" target="_blank">напишите</a> мне.</small></center>
                 </div>
               </div>
             </div>
@@ -66,7 +68,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-7 grid-margin stretch-card">
+        <div v-if="month_data.length > 0" class="col-md-7 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
               <div class="clearfix">
@@ -89,25 +91,33 @@
             </div>
           </div>
         </div>
-        <div class="col-md-5 grid-margin stretch-card">
+        <div  v-if="subsite_data[0]" class="col-md-5 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title">Статистика постов по подсайтам</h4>
               <trafficSourceChart :height='200' :statistic="subsite_data"></trafficSourceChart>
               <div id="traffic-chart-legend" class="rounded-legend legend-vertical legend-bottom-left pt-4">
                 <ul>
-                  <li>
+                  <li v-if="subsite_data[0]">
                     <span class="legend-dots bg-gradient-info"></span>{{ subsite_data[0].name }}
                     <span class="float-right">{{ subsite_data[0].count }}</span>
                   </li> 
-                  <li>
+                  <li v-if="subsite_data[1]">
                     <span class="legend-dots bg-gradient-success"></span>{{ subsite_data[1].name }}
                     <span class="float-right">{{ subsite_data[1].count }}</span>
                   </li> 
-                  <li>
+                  <li v-if="subsite_data[2]">
                     <span class="legend-dots bg-gradient-danger"></span>{{ subsite_data[2].name }}
                     <span class="float-right">{{ subsite_data[2].count }}</span>
-                    </li>
+                  </li>
+                  <li v-if="subsite_data[3]">
+                    <span class="legend-dots bg-gradient-secondary"></span>{{ subsite_data[3].name }}
+                    <span class="float-right">{{ subsite_data[3].count }}</span>
+                  </li>
+                  <li v-if="subsite_data[4]">
+                    <span class="legend-dots bg-gradient-primary"></span>{{ subsite_data[4].name }}
+                    <span class="float-right">{{ subsite_data[4].count }}</span>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -154,17 +164,37 @@
               <trafficSourceChart :height='200' :statistic="comments.subsites"></trafficSourceChart>
               <div id="traffic-chart-legend" class="rounded-legend legend-vertical legend-bottom-left pt-4">
                 <ul>
-                  <li>
+                  <li v-if="comments.subsites[0]">
                     <span class="legend-dots bg-gradient-info"></span>{{ comments.subsites[0].name }}
                     <span class="float-right">{{ comments.subsites[0].count }}</span>
                   </li> 
-                  <li>
+                  <li v-if="comments.subsites[1]">
                     <span class="legend-dots bg-gradient-success"></span>{{ comments.subsites[1].name }}
                     <span class="float-right">{{ comments.subsites[1].count }}</span>
                   </li> 
-                  <li>
+                  <li v-if="comments.subsites[2]">
                     <span class="legend-dots bg-gradient-danger"></span>{{ comments.subsites[2].name }}
                     <span class="float-right">{{ comments.subsites[2].count }}</span>
+                  </li>
+                  <li v-if="comments.subsites[3]">
+                    <span class="legend-dots bg-gradient-secondary"></span>{{ comments.subsites[3].name }}
+                    <span class="float-right">{{ comments.subsites[3].count }}</span>
+                  </li>
+                  <li v-if="comments.subsites[4]">
+                    <span class="legend-dots bg-gradient-primary"></span>{{ comments.subsites[4].name }}
+                    <span class="float-right">{{ comments.subsites[4].count }}</span>
+                  </li>
+                  <li v-if="comments.subsites[5]">
+                    <span class="legend-dots bg-gradient-light"></span>{{ comments.subsites[5].name }}
+                    <span class="float-right">{{ comments.subsites[5].count }}</span>
+                  </li>
+                  <li v-if="comments.subsites[6]">
+                    <span class="legend-dots bg-gradient-dark"></span>{{ comments.subsites[6].name }}
+                    <span class="float-right">{{ comments.subsites[6].count }}</span>
+                  </li>
+                  <li v-if="comments.subsites[7]">
+                    <span class="legend-dots bg-gradient-new"></span>{{ comments.subsites[7].name }}
+                    <span class="float-right">{{ comments.subsites[7].count }}</span>
                   </li>
                 </ul>
               </div>
@@ -188,9 +218,9 @@
         <div class="col-12 grid-margin">
           <div class="card">
             <div class="card-body">
-              <h4 class="card-title">Достижения <b>(2 / 16)</b></h4>
+              <h4 class="card-title">Достижения <b>({{ this.activeAchivements }} / 18)</b></h4>
               <div class="achivement-list">
-                <div v-for="achivement in achivements" :key="achivement.id" class="achivement">
+                <div v-for="achivement in achivements" :key="achivement.id" :class="achivement.active ? 'achivement active' : 'achivement'">
                   <img :src="achivement.image">
                   <div>
                     <b>{{ achivement.title }}</b>
@@ -271,6 +301,11 @@ export default {
           key: 'favourites',
           label: 'Добавлений в избранное',
           sortable: true
+        },
+        {
+          key: 'blocks',
+          label: 'Блоков',
+          sortable: true
         }
       ],
       comment_fields: [
@@ -300,129 +335,132 @@ export default {
       time1: null,
       stopComments: false,
       stopPosts: false,
+      totalRequests: 0,
+      totalLongs: 0,
+      activeAchivements: 0,
       achivements: [
         {
           id: 0,
-          image: 'https://kladraz.ru/upload/blogs2/2020/6/16515_4e59ee879c53e1baaeb2243d4e51192e.jpg',
+          image: 'https://stat.dtfpass.ru/achivements/1.jpeg',
           title: 'Начинающий щитпостер',
           description: 'Опубликуйте 150 постов',
           active: false
         },
         {
           id: 1,
-          image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAX8rnxH67o8s5_lPynGa0VY6eenLjXsdXYQ4BPkcPahlorgyb6jLyn9rKZpDyyN7UPOA&usqp=CAU',
+          image: 'https://stat.dtfpass.ru/achivements/2.jpeg',
           title: 'Продвинутый щитпостер',
           description: 'Опубликуйте 300 постов',
           active: false
         },
         {
           id: 2,
-          image: 'https://u.foxford.ngcdn.ru/uploads/tinymce_file/file/68725/2bfbebb6df74ddb6.png',
+          image: 'https://stat.dtfpass.ru/achivements/3.png',
           title: 'Мега щитпостер',
           description: 'Опубликуйте 500 постов',
           active: false
         },
         {
           id: 3,
-          image: 'https://thumbs.dreamstime.com/b/print-148080743.jpg',
+          image: 'https://stat.dtfpass.ru/achivements/4.jpeg',
           title: 'Бла',
           description: 'Напишете 500 комментариев',
           active: false
         },
         {
           id: 4,
-          image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple122/v4/ca/3c/ba/ca3cba78-2fa4-0eba-d07b-7f27193cbc69/source/256x256bb.jpg',
+          image: 'https://stat.dtfpass.ru/achivements/5.jpeg',
           title: 'Бла-бла',
           description: 'Напишете 1000 комментариев',
           active: false
         },
         {
           id: 5,
-          image: 'https://vk.com/sticker/1-9592-256b',
+          image: 'https://stat.dtfpass.ru/achivements/6.png',
           title: 'Бла-бла-бла',
           description: 'Напишете 2000 комментариев',
           active: false
         },
         {
           id: 6,
-          image: 'https://rf4game.ru/wp-content/uploads/avatar/256/0132/132694.jpg',
+          image: 'https://stat.dtfpass.ru/achivements/7.jpeg',
           title: 'Балабол',
           description: 'Напишете 4000 комментариев',
           active: false
         },
         {
           id: 7,
-          image: 'https://pbs.twimg.com/profile_images/586951572841631744/LhlbcfTd_400x400.jpg',
+          image: 'https://stat.dtfpass.ru/achivements/8.jpeg',
           title: 'Давай поговорим',
           description: 'Ответьте на 500 комментариев',
           active: false
         },
         {
           id: 8,
-          image: 'https://img.wattpad.com/10810468f021ffefc1dc86857e5228edefdb4257/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f776174747061642d6d656469612d736572766963652f53746f7279496d6167652f48386161585159586f63454a61413d3d2d313233313539323636342e31366639653534646438323263393030393531303230353734302e6a7067?s=fit&w=720&h=720',
+          image: 'https://stat.dtfpass.ru/achivements/9.jpeg',
           title: 'Слушай меня',
           description: 'Ответьте на 1000 комментариев',
           active: false
         },
         {
           id: 9,
-          image: 'https://i.pinimg.com/280x280_RS/bc/82/f8/bc82f84811c46ab071ade3d78b1c9456.jpg',
+          image: 'https://stat.dtfpass.ru/achivements/10.jpeg',
           title: 'Мне важно твоё мнение, но',
           description: 'Ответьте на 2000 комментариев',
           active: false
         },
         {
           id: 10,
-          image: 'https://rf4game.ru/wp-content/uploads/avatar/256/1470/1470447.jpg',
-          title: 'Популярность, это я',
+          image: 'https://stat.dtfpass.ru/achivements/11.jpeg',
+          title: 'Популярность - это я',
           description: '1000 оценок на вашем посте',
           active: false
         },
         {
           id: 11,
-          image: 'https://st.depositphotos.com/1654249/1263/i/950/depositphotos_12630386-stock-photo-3d-man-showing-thumb-up.jpg',
+          image: 'https://stat.dtfpass.ru/achivements/12.jpeg',
           title: 'Это уже топ?',
           description: '1000 оценок на вашем комментарии',
           active: false
         },
         {
           id: 12,
-          image: 'https://pm1.narvii.com/6928/5a1528b97adaff14f2884b34e3701d0f6935a972r1-1080-1920v2_128.jpg',
+          image: 'https://stat.dtfpass.ru/achivements/13.jpeg',
           title: 'АХАХАХ МЕМАСИКИ',
-          description: 'Прикрепите изображение к вашему комментарию, 500 раз',
+          description: 'Прикрепите изображение к вашему комментарию 500 раз',
           active: false
         },
         {
           id: 13,
-          image: 'https://static-s.aa-cdn.net/img/gp/20600015158347/o0nsNsbkGPgidZvdWHtWTe_5_a4Hc5IysaZtpm0XauLxVlXmGwvTKkGBf4V_ZUCFA6-1?v=1',
+          image: 'https://stat.dtfpass.ru/achivements/14.png',
           title: 'Разносторонняя личность',
           description: 'Создайте посты в 10 разных подсайтах',
           active: false
         },
         {
           id: 14,
-          image: 'https://ru-static.z-dn.net/files/d48/17149596928e8814713eecda44c26c46.png',
+          image: 'https://stat.dtfpass.ru/achivements/15.png',
           title: 'Я полезный',
           description: 'Ваши посты добавили в закладки 1000 раз',
           active: false
         },
         {
           id: 15,
-          image: 'https://cdn-icons-png.flaticon.com/128/2314/2314539.png',
+          image: 'https://stat.dtfpass.ru/achivements/16.png',
           title: 'Что, какой лонг?',
-          description: 'В этом году вы возможно написали лонг. (Больше 15 блоков в посте)',
+          description: 'В этом году вы, возможно, написали лонг. (Больше 35 блоков в посте)',
           active: false
         },
         {
           id: 16,
-          image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOrj4H1znZkgWoPmejCa9cCgRpCj-8mpgIPQ&usqp=CAU',
+          image: 'https://stat.dtfpass.ru/achivements/17.jpeg',
           title: 'Хороший мальчик',
-          description: 'Написать 5 лонгов (Больше 15 блоков в посте)',
+          description: 'Написать 5 лонгов (Больше 35 блоков в посте)',
           active: false
         },
         {
           id: 17,
-          image: 'https://vk.com/sticker/1-57373-256',
+          image: 'https://stat.dtfpass.ru/achivements/18.png',
           title: 'Посмотрите на меня',
           description: '100 000 просмотров ваших постов',
           active: false
@@ -445,7 +483,7 @@ export default {
         this.getCommentsStatistic();
       })
       .catch(function (error) {
-        // handle error
+        alert('Ошибка получения данных. Возможно ваш профиль скрыт.');
         console.log(error);
       });
   },
@@ -455,6 +493,7 @@ export default {
         await axios.get('https://api.dtf.ru/v1.8/user/'+ this.user.id +'/entries?count=50&offset=' + i*50)
           .then((response) => {
             const result = response.data.result;
+            this.totalRequests += 1;
             for (let k = 0; k <= result.length; k++) {
               if (result[k] && result[k].dateRFC.includes('2022')) {
                 this.total.comments += result[k].commentsCount;
@@ -476,9 +515,13 @@ export default {
                   'comments': result[k].commentsCount,
                   'hits': result[k].hitsCount,
                   'favourites': result[k].favoritesCount,
+                  'blocks': result[k].blocks.length,
                   'date': postDate
                 };
                 this.posts.push(data);
+
+                if (result[k].likes.count >= 1000) { this.achivements[10].active = true; }
+                if (result[k].blocks.length >= 35) { this.totalLongs += 1; }
 
                 // Make array for month statisitc
                 if (!this.month_data[postDate.getMonth()]) {
@@ -495,26 +538,39 @@ export default {
                 } else {
                   this.subsite_data[result[k].subsite.id].count += 1;
                 }
+                if (result.length < 49 && this.user.totalPosts >= 50) {
+                  this.stopPosts = true;
+                  break;
+                }
               } else {
                 if (result[k] && result[k].dateRFC.includes('2021')) {
-                  this.subsiteData();
                   this.stopPosts = true;
                   break;
                 }
               }
             }
+            if (result.length == 0) {
+               this.stopPosts = true;
+            }
           })
           .catch(function (error) {
-            // handle error
+            alert('Ошибка получения данных. Возможно ваш профиль скрыт.');
             console.log(error);
           });
           if (this.stopPosts) { break; }
       }
+      for (var l = 0; l <= 11; l++) {
+        if (!this.month_data[l]) {
+          this.month_data[l] = { posts: 0, comments: 0, favourites: 0 };
+        }
+      }
+      this.subsiteData();
     },
     async getCommentsStatistic() {
       for (var i = 0; i <= Math.round(this.user.totalComments / 50); i++) {
         await axios.get('https://api.dtf.ru/v1.8/user/'+ this.user.id +'/comments?count=50&offset=' + i*50)
           .then((response) => {
+            this.totalRequests += 1;
             const result = response.data.result;
             for (let k = 0; k <= result.length; k++) {
               if (result[k] && result[k].dateRFC.includes('2022')) {
@@ -527,6 +583,8 @@ export default {
                   this.comments.media += 1;
                 }
 
+                if (result[k].likes.count >= 1000) { this.achivements[11].active = true; }
+
                 const data = {
                   'id': result[k].id,
                   'url': '<a href="' + result[k].entry.url + '?comment=' + result[k].id + '" target="_blank">'+ result[k].id +'</a>',
@@ -535,11 +593,13 @@ export default {
                 this.comments.data.push(data);
 
                 // Make array for subsite statisitc
-                if (typeof result[k].entry.subsite.name !== 'undefined') {
-                  if (!this.comments.subsites[result[k].entry.subsite.id]) {
-                    this.comments.subsites[result[k].entry.subsite.id] = { count: 1, name: result[k].entry.subsite.name };
-                  } else {
-                    this.comments.subsites[result[k].entry.subsite.id].count += 1;
+                if (result[k].entry.subsite.name) {
+                  if (typeof result[k].entry.subsite.name !== 'undefined') {
+                    if (!this.comments.subsites[result[k].entry.subsite.id]) {
+                      this.comments.subsites[result[k].entry.subsite.id] = { count: 1, name: result[k].entry.subsite.name };
+                    } else {
+                      this.comments.subsites[result[k].entry.subsite.id].count += 1;
+                    }
                   }
                 }
               } else {
@@ -551,28 +611,89 @@ export default {
                 }
               }
             }
+            if (result.length < 49) {
+              this.subsiteCommentsData();
+              this.topComments();
+              this.stopComments = true;
+            }
+            if (result.length == 0) {
+              this.subsiteCommentsData();
+              this.topComments();
+              this.stopComments = true;
+            }
           });
           if (this.stopComments) { this.loaded = true; break; }
       }
+      this.checkAchivements();
     },
     subsiteData() {
+      if (this.subsite_data.length >= 10) { this.achivements[13].active = true; }
       this.subsite_data = this.subsite_data.sort((a,b)=> (a.count < b.count ? 1 : -1));
-      this.subsite_data = this.subsite_data.slice(0, 3);
+      this.subsite_data = this.subsite_data.slice(0, 5);
     },
     subsiteCommentsData() {
       this.comments.subsites = this.comments.subsites.sort((a,b)=> (a.count < b.count ? 1 : -1));
-      this.comments.subsites = this.comments.subsites.slice(0, 3);
+      this.comments.subsites = this.comments.subsites.slice(0, 8);
     },
     topComments() {
       this.comments.data = this.comments.data.sort((a,b)=> (a.likes < b.likes ? 1 : -1));
-      this.comments.data = this.comments.data.slice(0, 8);
+      this.comments.data = this.comments.data.slice(0, 12);
+    },
+    checkAchivements() {
+      if (this.posts.length >= 150) {
+        this.achivements[0].active = true;
+      }
+      if (this.posts.length >= 300) {
+        this.achivements[1].active = true;
+      }
+      if (this.posts.length >= 500) {
+        this.achivements[2].active = true;
+      }
+      if (this.comments.total >= 500) {
+        this.achivements[3].active = true;
+      }
+      if (this.comments.total >= 1000) {
+        this.achivements[4].active = true;
+      }
+      if (this.comments.total >= 2000) {
+        this.achivements[5].active = true;
+      }
+      if (this.comments.total >= 4000) {
+        this.achivements[6].active = true;
+      }
+      if (this.comments.reply >= 500) {
+        this.achivements[7].active = true;
+      }
+      if (this.comments.reply >= 1000) {
+        this.achivements[8].active = true;
+      }
+      if (this.comments.reply >= 2000) {
+        this.achivements[9].active = true;
+      }
+      if (this.comments.media >= 500) {
+        this.achivements[12].active = true;
+      }
+      if (this.total.favorites >= 1000) {
+        this.achivements[14].active = true;
+      }
+      if (this.totalLongs >= 1) {
+        this.achivements[15].active = true;
+      }
+      if (this.totalLongs >= 5) {
+        this.achivements[16].active = true;
+      }
+      if (this.total.hits >= 100000) {
+        this.achivements[17].active = true;
+      }
+      for (var a = 0; a <= 17; a++) {
+        if (this.achivements[a].active) {
+          this.activeAchivements += 1;
+        }
+      }
     }
   },
 }
 </script>
-
-//https://dtf.ru/u/23790-jfyx-melograno
-//Проверить
 
 <style scoped>
 .achivement-list {
@@ -583,7 +704,7 @@ export default {
 .achivement {
   background: #000000;
   border-radius: 10px;
-  width: 450px;
+  width: 400px;
   display: flex;
   align-items: center;
   padding: 10px;

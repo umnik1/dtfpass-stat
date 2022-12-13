@@ -14,7 +14,7 @@
                 <h6 class="font-weight-light">Для этого, введите свой id профиля</h6>
                 <form class="pt-3">
                   <div class="form-group">
-                    <input v-model="id" type="text" class="form-control form-control-lg" placeholder="id">
+                    <input v-model="id" type="number" class="form-control form-control-lg" placeholder="id">
                   </div>
                   <hr>
                   <div class="mt-3">
